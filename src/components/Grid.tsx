@@ -59,6 +59,59 @@ function Grid() {
         </div>
     );
 
+    const blockValuesGrid = (!modules || modules.length === 0) ? null : (
+        <div>
+            {modules.map((row, rowIndex) => (
+                <div key={rowIndex}>
+                    {row.map((module, moduleIndex) => (
+                        <span key={`${rowIndex}-${moduleIndex}`}>{module.blockBit} </span>
+                    ))}
+                </div>
+            ))}
+        </div>
+    );
+
+//    const numberOfBlocks = modules.reduce((max, subArray) => {
+//        // Find the largest blockIndex in the current subArray
+//        const maxInSubArray = subArray.reduce((subMax, obj) => {
+//          return obj.blockIndex > subMax ? obj.blockIndex : subMax;
+//        }, -Infinity);
+//      
+//        // Compare it with the current max
+//        return maxInSubArray > max ? maxInSubArray : max;
+//    }, -Infinity);
+//
+//    const blockValues = [];
+//    for(let blockLooper = 0; blockLooper <= numberOfBlocks; blockLooper++) {
+//        const blockBits = [];
+//        for(let rowLooper = 0; rowLooper < modules.length; rowLooper++) {
+//            for(let colLooper = 0; colLooper < modules[rowLooper].length; colLooper++) {
+//                if(modules[rowLooper][colLooper].blockIndex === blockLooper) {
+//                    const module = modules[rowLooper][colLooper];
+//                    const postMaskValue = module.value === module.masks[1] ? 0 : 1;
+//                    blockBits[modules[rowLooper][colLooper].blockBit] = postMaskValue;
+//                }
+//            }
+//        }
+//        blockValues[blockLooper] = blockBits;
+//    }
+//    console.log("blockValues");
+//    console.log(blockValues);
+//
+//    const blockAscii = blockValues.map((block, blockIndex) => {
+//        return block.reduce((accumulator, bit, bitIndex) => {
+//            return accumulator + (bit ? Math.pow(2, bitIndex) : 0);
+//        }, 0);
+//    });
+//    console.log("blockAscii");
+//    console.log(blockAscii);
+//
+//    const blockAsciiString = blockAscii.map((ascii) => {
+//        return String.fromCharCode(ascii);
+//    });
+//    console.log("blockAsciiString");
+//    console.log(blockAsciiString);
+
     return (
         <>
             <div
@@ -79,6 +132,8 @@ function Grid() {
                         //const borderWidth = module.masks[2] ? 2 : 1;
                         //const borderColor = (module.masks[2] && !module.isFixed && !module.isData) ? '#800' : '#ccc';
                         const borderColor = '#ccc';
+                        const blockString = `${module.blockIndex === 0 ? "x" : module.blockIndex} - ${module.blockBit === -1 ? "x" : module.blockBit}`;
+                        const pairString = `D${module.pairIndex === 0 ? "x" : module.pairIndex} - ${module.pairBit === -1 ? "x" : module.pairBit}`;
                         return(
                             <div
                                 key={`${rowIndex}-${colIndex}`}
@@ -87,22 +142,26 @@ function Grid() {
                                 style={{
                                     height: '1.5rem',
                                     width: '1.5rem',
-                                    //border: `${"1"}px solid ${borderColor}`,
+                                    border: `${"1"}px solid ${borderColor}`,
                                     color: "#080",
                                     //color: "transparent",
                                     fontSize: "0.5rem",
                                     background: background,
                                     lineHeight: "0.5rem",
                                 }}
-                            >{module.blockIndex === 0 ? "x" : module.blockIndex}-{module.blockBit === -1 ? "x" : module.blockBit}<br />D{module.pairIndex === 0 ? "x" : module.pairIndex}-{module.pairBit === -1 ? "x" : module.pairBit}</div>
+                            >
+                                {blockString}
+                                {false && <br />}
+                                {false && pairString}
+                            </div>
                         )
                     })
                 )}
             </div>
             {false && <span>[{currentDrawingValues}]</span>}
-            {pairValuesGrid}
-            <span style={{display: "flex"}}>Current domain: {currentDomain}</span><br /><span  style={{display: "flex"}}>Current string location: {currentStringIndex} of {(!pairValues || !pairValues[0]) ? "?" : pairValues[0].reduce((total, str) => total + str.length, 0)}</span><br /><span style={{display: "flex"}}>started: {lastRefresh}</span>
-
+            {false && pairValuesGrid}
+            {false && <><span style={{display: "flex"}}>Current domain: {currentDomain}</span><br /><span  style={{display: "flex"}}>Current string location: {currentStringIndex} of {(!pairValues || !pairValues[0]) ? "?" : pairValues[0].reduce((total, str) => total + str.length, 0)}</span><br /><span style={{display: "flex"}}>started: {lastRefresh}</span></>}
+            {blockValuesGrid}
         </>
     );
 }

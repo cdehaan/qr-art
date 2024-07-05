@@ -1927,9 +1927,9 @@ export const ModulesProvider = ({ children }: { children: ReactNode }) => {
 
   let cleanPairValues: string[][];
   useEffect(() => {
-    console.log("Starting search");
     (async () => {
       setPairValues(calculatePairValues(modules));
+      //console.log("Starting search");
       //cleanPairValues = await calculatePairValuesWithDomain(pairValues);
     })();
   }, []);
