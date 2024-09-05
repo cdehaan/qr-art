@@ -18,8 +18,7 @@ export default function App() {
   // ª = 10101010 = 170
   // Ì = 11001100 = 204
   const ArraySize = 425;
-  const [qrCode8BitData, setQrCode8BitData] = useState<Uint8Array>(new Uint8Array(ArraySize).fill(85));
-  //const [qrCode8BitData, setQrCode8BitData] = useState<Uint8Array>(new Uint8Array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]));
+  const [qrCode8BitData, setQrCode8BitData] = useState<Uint8Array>(new Uint8Array(ArraySize).fill(170));
   //const [qrCode8BitData, setQrCode8BitData] = useState<Uint8Array>(new Uint8Array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]));
   /*
 12345678911234567892123456789312345678941234567895123456789612345678971234567898123456789912345678901234567891123456789212345678931234567894123456789512345678961234567897123456789812345678991234567890123456789112345678921234567893123456789412345678951234567896123456789712345678981234567899123456789012345678911234567892123456789312345678941234567895123456789612345678971234567898123456789912345678901234567891123456789212345
@@ -60,12 +59,12 @@ export default function App() {
       <div className="App">
         <header className="App-header">
           <span>QR Code Generator</span>
-          {qrCodeUrl ? <img style={{height: "70vh"}} src={qrCodeUrl} alt="QR Code" /> : <p>Loading...</p>}
+          {qrCodeUrl ? <img style={{height: "50vh"}} src={qrCodeUrl} alt="QR Code" /> : <p>Loading...</p>}
           {false && <input type='text' style={{width: "80vw"}} value={qrCodeData} onChange={(e) => setQrCodeData(e.target.value)} />}
           <input type='text' style={{width: "80vw"}} value={dataToAscii(qrCode8BitData)} onChange={(e) => setQrCode8BitData(asciiToData(e.target.value))} />
-          <PairInputs setQrCodeData={setQrCodeData} />
+          {false && <PairInputs setQrCodeData={setQrCodeData} />}
         </header>
-        <Grid />
+        {false && <Grid />}
       </div>
     </ModulesProvider>
   );
