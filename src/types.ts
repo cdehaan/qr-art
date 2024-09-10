@@ -6,15 +6,18 @@ export type PixelCoordinateType = {
 export type QrBlockType = {
   blockNumber: number;
   coordinates: PixelCoordinateType[];
-  isDataBlock: boolean;
+  dataType: PixelDataType;
 }
 
 export type PixelDataType = {
-  type: "data" | "alignment" | "format" | "version" | "finder" | "timing";
+  type: "data" | "alignment" | "format" | "version" | "finder" | "timing" | "metadata";
   block: number | null;
-  bitIndex: number | null;
   dataBlock: number | null;
+  dataBitIndex: number | null;
   correctionBlock: number | null;
+  correctionBitIndex: number | null;
+  contentBlock: number | null;
+  contentBitIndex: number | null;
 }
 
 export type QrCodeInformationType = {
@@ -48,6 +51,8 @@ export type QrVersionInformationType = {
   version: number;
   blocks: number;
   capacity: number;
+  metadataLength: number;
+  alignmentPatterns: number[];
   correctionLevels: CorrectionLevelInformationType[];
 }
 

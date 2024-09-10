@@ -6,7 +6,7 @@ import { CorrectionLevelInformationType, CorrectionPatternType, QrVersionInforma
 //correctionLevel, repetitions, (total codewords, data codewords, error tollerance)
 //L 7 1 (26,19,2)
 
-export const rawQrCodeSpec = `
+const rawQrCodeSpec = `
 1 26 17
 L 7 1 (26,19,2)
 M 10 1 (26,16,4)
@@ -376,8 +376,50 @@ H 2430 20 (45,15,15)
 61 (46,16,15)
 `;
 
-export function parseQrCodeSpec(data: string): QrVersionInformationType[] {
-  const lines = data.split('\n').map(line => line.trim()).filter((line) => line.length > 0);
+const alignmentPatterns = [
+  {version: 2, coordinates: [6, 18]},
+  {version: 3, coordinates: [6, 22]},
+  {version: 4, coordinates: [6, 26]},
+  {version: 5, coordinates: [6, 30]},
+  {version: 6, coordinates: [6, 34]},
+  {version: 7, coordinates: [6, 22, 38]},
+  {version: 8, coordinates: [6, 24, 42]},
+  {version: 9, coordinates: [6, 26, 46]},
+  {version: 10, coordinates: [6, 28, 50]},
+  {version: 11, coordinates: [6, 30, 54]},
+  {version: 12, coordinates: [6, 32, 58]},
+  {version: 13, coordinates: [6, 34, 62]},
+  {version: 14, coordinates: [6, 26, 46, 66]},
+  {version: 15, coordinates: [6, 26, 48, 70]},
+  {version: 16, coordinates: [6, 26, 50, 74]},
+  {version: 17, coordinates: [6, 30, 54, 78]},
+  {version: 18, coordinates: [6, 30, 56, 82]},
+  {version: 19, coordinates: [6, 30, 58, 86]},
+  {version: 20, coordinates: [6, 34, 62, 90]},
+  {version: 21, coordinates: [6, 28, 50, 72, 94]},
+  {version: 22, coordinates: [6, 26, 50, 74, 98]},
+  {version: 23, coordinates: [6, 30, 54, 78, 102]},
+  {version: 24, coordinates: [6, 28, 54, 80, 106]},
+  {version: 25, coordinates: [6, 32, 58, 84, 110]},
+  {version: 26, coordinates: [6, 30, 58, 86, 114]},
+  {version: 27, coordinates: [6, 34, 62, 90, 118]},
+  {version: 28, coordinates: [6, 26, 50, 74, 98, 122]},
+  {version: 29, coordinates: [6, 30, 54, 78, 102, 126]},
+  {version: 30, coordinates: [6, 26, 52, 78, 104, 130]},
+  {version: 31, coordinates: [6, 30, 56, 82, 108, 134]},
+  {version: 32, coordinates: [6, 34, 60, 86, 112, 138]},
+  {version: 33, coordinates: [6, 30, 58, 86, 114, 142]},
+  {version: 34, coordinates: [6, 34, 62, 90, 118, 146]},
+  {version: 35, coordinates: [6, 30, 54, 78, 102, 126, 150]},
+  {version: 36, coordinates: [6, 24, 50, 76, 102, 128, 154]},
+  {version: 37, coordinates: [6, 28, 54, 80, 106, 132, 158]},
+  {version: 38, coordinates: [6, 32, 58, 84, 110, 136, 162]},
+  {version: 39, coordinates: [6, 26, 54, 82, 110, 138, 166]},
+  {version: 40, coordinates: [6, 30, 58, 86, 114, 142, 170]}
+];
+
+export function genQrCodeSpec(): QrVersionInformationType[] {
+  const lines = rawQrCodeSpec.split('\n').map(line => line.trim()).filter((line) => line.length > 0);
   const qrData: QrVersionInformationType[] = [];
   let currentQrData: QrVersionInformationType | null = null;
   let currentCorrectionLevel: CorrectionLevelInformationType | null = null;
@@ -396,10 +438,13 @@ export function parseQrCodeSpec(data: string): QrVersionInformationType[] {
         qrData.push(currentQrData);
       }
 
+      const newVersion = parseInt(versionBlockMatch[1], 10);
       currentQrData = {
-        version: parseInt(versionBlockMatch[1], 10),
+        version: newVersion,
         blocks: parseInt(versionBlockMatch[2], 10),
         capacity: parseInt(versionBlockMatch[3], 10),
+        metadataLength: newVersion < 10 ? 12 : 20,  // for 8-bit byte encoding only
+        alignmentPatterns: alignmentPatterns.find(ap => ap.version === newVersion)?.coordinates || [],
         correctionLevels: [],
       };
       currentCorrectionLevel = null;

@@ -7,7 +7,7 @@ type GenQrProps = {
 
 export default function GenQr({ qrData }: GenQrProps) {
 
-  function QrPixel({ pixelInfo: pixelInfo }: { pixelInfo: PixelDataType }) {
+  function QrPixel({ pixelInfo }: { pixelInfo: PixelDataType }) {
     const colours = [
       {type: "finder", colour: "#000"},
       {type: "alignment", colour: "#369"},
@@ -17,7 +17,7 @@ export default function GenQr({ qrData }: GenQrProps) {
       {type: "data", colour: "#888"},
     ]
     return (
-      <div style={{display:"flex", height: "0.5rem", width:"0.5rem", fontSize:"0.2rem", backgroundColor: colours.find(rule => rule.type === pixelInfo.type)?.colour }}>{pixelInfo.type === "data" ? `${pixelInfo.dataBlock || 0}-${pixelInfo.bitIndex || 0}` : pixelInfo.type}</div>
+      <div style={{display:"flex", height: "0.5rem", width:"0.6rem", fontSize:"0.2rem", borderLeft:"0.5px solid #f00", backgroundColor: colours.find(rule => rule.type === pixelInfo.type)?.colour }}>{pixelInfo.type === "data" ? `${pixelInfo.contentBlock}-${pixelInfo.contentBitIndex}` : pixelInfo.type.substring(0,3)}</div>
     )
   }
 

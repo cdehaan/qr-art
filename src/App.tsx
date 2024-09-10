@@ -7,12 +7,11 @@ import { ModulesProvider } from './contexts/ModulesContext';
 import { versionToBlocks } from './utils/versionToBlocks';
 import GenQr from './components/GenQr';
 
-const qrData = versionToBlocks(13, "L");
+const qrInfo = versionToBlocks(13, "L");
 
 export default function App() {
   const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
 
-  // longest possible in version 6 alphanumeric: 195 characters
   const [qrCodeData, setQrCodeData] = useState<string>('GITHUB.COM/CDEHAAN');
 
   // longest possible in version 6 byte: 134 characters
@@ -22,7 +21,7 @@ export default function App() {
   // ª = 10101010 = 170
   // Ì = 11001100 = 204
   const ArraySize = 425;
-  const [qrCode8BitData, setQrCode8BitData] = useState<Uint8Array>(new Uint8Array(ArraySize).fill(170));
+  const [qrCode8BitData, setQrCode8BitData] = useState<Uint8Array>(new Uint8Array(ArraySize).fill(0));
   //const [qrCode8BitData, setQrCode8BitData] = useState<Uint8Array>(new Uint8Array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]));
 
   const segs: QRCodeSegment[] = [
@@ -66,7 +65,7 @@ export default function App() {
           <input type='text' style={{width: "80vw"}} value={dataToAscii(qrCode8BitData)} onChange={(e) => setQrCode8BitData(asciiToData(e.target.value))} />
           {false && <PairInputs setQrCodeData={setQrCodeData} />}
           {false && <Grid />}
-          <GenQr qrData={qrData} />
+          <GenQr qrData={qrInfo} />
         </div>
       </div>
     </ModulesProvider>
