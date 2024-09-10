@@ -7,7 +7,9 @@ import { ModulesProvider } from './contexts/ModulesContext';
 import { versionToBlocks } from './utils/versionToBlocks';
 import GenQr from './components/GenQr';
 
-const qrInfo = versionToBlocks(13, "L");
+const version = 13;
+const errorCorrectionLevel = "L";
+const qrInfo = versionToBlocks(version, errorCorrectionLevel);
 
 export default function App() {
   const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
