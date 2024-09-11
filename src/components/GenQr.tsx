@@ -3,21 +3,42 @@ import { PixelDataType, QrCodeInformationType } from "../types";
 
 type GenQrProps = {
     qrData: QrCodeInformationType;
+    content: Uint8Array;
 };
 
-export default function GenQr({ qrData }: GenQrProps) {
+const colours = [
+  {type: "finder", hue: 90, saturation: 50}, // green
+  {type: "alignment", hue: 210, saturation: 50}, //  "#369"
+  {type: "format", hue: 30, saturation: 50}, //  "#963"
+  {type: "timing", hue: 150, saturation: 50}, //  "#396"
+  {type: "version", hue: 270, saturation: 50}, //  "#639"
+  {type: "metadata", hue: 180, saturation: 50}, // teal
+  {type: "correction", hue: 3300, saturation: 22}, // yellow
+  {type: "data", hue: 0, saturation: 0}, //  gray
+]
+
+export default function GenQr({ qrData, content }: GenQrProps) {
 
   function QrPixel({ pixelInfo }: { pixelInfo: PixelDataType }) {
-    const colours = [
-      {type: "finder", colour: "#000"},
-      {type: "alignment", colour: "#369"},
-      {type: "format", colour: "#963"},
-      {type: "timing", colour: "#396"},
-      {type: "version", colour: "#639"},
-      {type: "data", colour: "#888"},
-    ]
+    const colour = colours.find(rule => rule.type === pixelInfo.type);
+    const pixelState = (!qrData.maskPattern)// || !pixelInfo.dataBlock || !content[pixelInfo.dataBlock] || !pixelInfo.dataBitIndex) 
+      ? 0
+      : pixelInfo.masks[qrData.maskPattern];// ^ parseInt(content[pixelInfo.dataBlock].toString(2).padStart(8,"0").substring(pixelInfo.dataBitIndex, pixelInfo.dataBitIndex+1), 10);
     return (
-      <div style={{display:"flex", height: "0.5rem", width:"0.6rem", fontSize:"0.2rem", borderLeft:"0.5px solid #f00", backgroundColor: colours.find(rule => rule.type === pixelInfo.type)?.colour }}>{pixelInfo.type === "data" ? `${pixelInfo.contentBlock}-${pixelInfo.contentBitIndex}` : pixelInfo.type.substring(0,3)}</div>
+      <div style={{
+        display:"flex",
+        height: "0.8rem",
+        lineHeight:"0.8rem",
+        width:"1.5rem",
+        fontSize:"0.5rem",
+        overflow:"hidden",
+        borderLeft:"1px solid #f00",
+        backgroundColor:`hsl(${colour?.hue}, ${colour?.saturation}%, ${(pixelState === 1 && (pixelInfo.type === "data" || pixelInfo.type === "metadata" || pixelInfo.type === "correction")) ? "40" : "60"}%)` }}
+      >{pixelInfo.type === "data" ?
+        `${pixelInfo.contentBlock}-${pixelInfo.contentBitIndex}` :
+        pixelInfo.type === "correction" ?
+        `${pixelInfo.correctionBlock}-${pixelInfo.correctionBitIndex}` :
+        pixelInfo.type.substring(0,3)}</div>
     )
   }
 
@@ -25,8 +46,10 @@ export default function GenQr({ qrData }: GenQrProps) {
     const qrPixel = row.map((pixel, columnIndex) => {
       return <QrPixel pixelInfo={pixel} key={columnIndex} />
     })
-    return <div key={rowIndex} style={{display:"flex", flexDirection:"column", height: "0.5rem", width:"0.5rem"}}>{qrPixel}</div>
+    return <div key={rowIndex} style={{display:"flex", flexDirection:"column"}}>{qrPixel}</div>
   });
+
+  if(!content) return <p>Loading...</p>
 
   return (
     <div style={{display: "flex"}}>

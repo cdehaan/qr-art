@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import QRCode, { QRCodeSegment, QRCodeToDataURLOptions } from 'qrcode';
+import QRCode, { QRCodeMaskPattern, QRCodeSegment, QRCodeToDataURLOptions } from 'qrcode';
 import Grid from './components/Grid';
 import PairInputs from './components/PairInputs';
 import { ModulesProvider } from './contexts/ModulesContext';
 import { versionToBlocks } from './utils/versionToBlocks';
 import GenQr from './components/GenQr';
+import { CorrectionLevelType } from './types';
 
-const version = 13;
-const errorCorrectionLevel = "L";
-const qrInfo = versionToBlocks(version, errorCorrectionLevel);
+const version: number = 13;
+const errorCorrectionLevel: CorrectionLevelType = "L";
+const maskPattern: QRCodeMaskPattern = 5;
+const qrInfo = versionToBlocks(version, errorCorrectionLevel, maskPattern);
 
 export default function App() {
   const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
@@ -23,20 +25,19 @@ export default function App() {
   // ª = 10101010 = 170
   // Ì = 11001100 = 204
   const ArraySize = 425;
-  const [qrCode8BitData, setQrCode8BitData] = useState<Uint8Array>(new Uint8Array(ArraySize).fill(0));
+  const [qrCode8BitContent, setQrCode8BitContent] = useState<Uint8Array>(new Uint8Array(ArraySize).fill(0));
   //const [qrCode8BitData, setQrCode8BitData] = useState<Uint8Array>(new Uint8Array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]));
 
-  const segs: QRCodeSegment[] = [
-    { data: qrCode8BitData, mode: 'byte' }
-  ]
-
-  const options: QRCodeToDataURLOptions = {
-    errorCorrectionLevel: 'L',
-    maskPattern: 1,
-  }
-
-
   useEffect(() => {
+    const segs: QRCodeSegment[] = [
+      { data: qrCode8BitContent, mode: 'byte' }
+    ]
+  
+    const options: QRCodeToDataURLOptions = {
+      errorCorrectionLevel: errorCorrectionLevel,
+      maskPattern: maskPattern,
+    }
+  
     const generateQrCode = async () => {
       try {
         const url = await QRCode.toDataURL(segs, options);
@@ -47,7 +48,7 @@ export default function App() {
     };
 
     generateQrCode();
-  }, [qrCode8BitData]);
+  }, [qrCode8BitContent]);
 
   const dataToAscii = (data: Uint8Array) => {
     return data.reduce((acc, val) => acc + String.fromCharCode(val), '');
@@ -64,10 +65,10 @@ export default function App() {
           <span>QR Code Generator</span><br />
           {qrCodeUrl ? <img style={{height: "50vh", width:"50vh"}} src={qrCodeUrl} alt="QR Code" /> : <p>Loading...</p>}
           {false && <input type='text' style={{width: "80vw"}} value={qrCodeData} onChange={(e) => setQrCodeData(e.target.value)} />}
-          <input type='text' style={{width: "80vw"}} value={dataToAscii(qrCode8BitData)} onChange={(e) => setQrCode8BitData(asciiToData(e.target.value))} />
+          <input type='text' style={{width: "80vw"}} value={dataToAscii(qrCode8BitContent)} onChange={(e) => setQrCode8BitContent(asciiToData(e.target.value))} />
           {false && <PairInputs setQrCodeData={setQrCodeData} />}
           {false && <Grid />}
-          <GenQr qrData={qrInfo} />
+          <GenQr qrData={qrInfo} content={qrCode8BitContent} />
         </div>
       </div>
     </ModulesProvider>

@@ -10,7 +10,7 @@ export type QrBlockType = {
 }
 
 export type PixelDataType = {
-  type: "data" | "alignment" | "format" | "version" | "finder" | "timing" | "metadata";
+  type: "data" | "correction" | "alignment" | "format" | "version" | "finder" | "timing" | "metadata";
   block: number | null;
   dataBlock: number | null;
   dataBitIndex: number | null;
@@ -18,6 +18,7 @@ export type PixelDataType = {
   correctionBitIndex: number | null;
   contentBlock: number | null;
   contentBitIndex: number | null;
+  masks: number[];
 }
 
 export type QrCodeInformationType = {

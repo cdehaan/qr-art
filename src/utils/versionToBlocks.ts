@@ -1,7 +1,7 @@
 import { CorrectionLevelType, QrCodeInformationType } from "../types";
 import { genQrCodeSpec } from "./qrVersionData";
 
-export function versionToBlocks(version: number, correctionLevel: CorrectionLevelType): QrCodeInformationType {
+export function versionToBlocks(version: number, correctionLevel: CorrectionLevelType, maskPattern: number): QrCodeInformationType {
   const gridSize = version * 4 + 17; // e.g. Version 5 is 37x37
 
   const qrSpec = genQrCodeSpec();
@@ -13,7 +13,7 @@ export function versionToBlocks(version: number, correctionLevel: CorrectionLeve
   const qrCodeInformation: QrCodeInformationType = {
     version: version,
     gridSize: gridSize,
-    maskPattern: null,
+    maskPattern: maskPattern,
     blocks: [],
     pixels: Array.from({ length: gridSize }, () =>
       Array.from({ length: gridSize }, () => ({
@@ -25,6 +25,7 @@ export function versionToBlocks(version: number, correctionLevel: CorrectionLeve
         correctionBitIndex: null,
         contentBitIndex: null,
         contentBlock: null,
+        masks: [],
       }))
     ),
   };
@@ -97,7 +98,41 @@ export function versionToBlocks(version: number, correctionLevel: CorrectionLeve
   }
   //#endregion
 
-  //#region Assign blocks
+  //#region Fill mask patterns
+  for(let patternIndex = 0; patternIndex < 8; patternIndex++) {
+    for(let x = 0; x < gridSize; x++) {
+      for(let y = 0; y < gridSize; y++) {
+        if((x + y) % 2 === 0) {
+          qrCodeInformation.pixels[x][y].masks[0] = 1;
+        }
+        if(y % 2 === 0) {
+          qrCodeInformation.pixels[x][y].masks[1] = 1;
+        }
+        if(x % 3 === 0) {
+          qrCodeInformation.pixels[x][y].masks[2] = 1;
+        }
+        if((x + y) % 3 === 0) {
+          qrCodeInformation.pixels[x][y].masks[3] = 1;
+        }
+        if((Math.floor(x / 3) + Math.floor(y / 2)) % 2 === 0) {
+          qrCodeInformation.pixels[x][y].masks[4] = 1;
+        }
+        if((x * y) % 2 + (x * y) % 3 === 0) {
+          qrCodeInformation.pixels[x][y].masks[5] = 1;
+        }
+        if(((x * y) % 2 + (x * y) % 3) % 2 === 0) {
+          qrCodeInformation.pixels[x][y].masks[6] = 1;
+        }
+        if(((x + y) % 2 + (x * y) % 3) % 2 === 0) {
+          qrCodeInformation.pixels[x][y].masks[7] = 1;
+        }
+      }
+    }
+  }
+
+  //#endregion
+
+  //#region Calculate blocks / datablocks / content blocks / error correction blocks / bit indexes
   let movingUp = true;
   let blockNumber = 1;
   let bitIndex = 7;
@@ -127,6 +162,7 @@ export function versionToBlocks(version: number, correctionLevel: CorrectionLeve
               qrCodeInformation.pixels[x-step][y].type = "metadata";
             }
           } else {
+            qrCodeInformation.pixels[x-step][y].type = "correction";
             qrCodeInformation.pixels[x-step][y].correctionBlock = sequencedBlock;
             qrCodeInformation.pixels[x-step][y].correctionBitIndex = bitIndex;
           }
