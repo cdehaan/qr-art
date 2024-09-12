@@ -181,7 +181,7 @@ export function versionToBlocks(version: number, correctionLevel: CorrectionLeve
             }
           } else {
             const correctionBlock = blockNumber - dataBlocks;
-            const fixedBlock = correctionBlock > (correctionBlocks/2 - 2); // the second half of correction blocks can't be changed
+            const fixedBlock = correctionBlock > (correctionBlocks/2 - 4); // the second half of correction blocks can't be changed
             qrCodeInformation.pixels[x-step][y].type = "correction";
             qrCodeInformation.pixels[x-step][y].correctionBlock = sequencedBlock;
             qrCodeInformation.pixels[x-step][y].correctionBitIndex = bitIndex;
