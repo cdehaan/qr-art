@@ -62,7 +62,7 @@ export function versionToBlocks(version: number, correctionLevel: CorrectionLeve
         for(let x = -2; x <= 2; x++) {
           for(let y = -2; y <= 2; y++) {
             qrCodeInformation.pixels[coordX + x][coordY + y].type = "alignment";
-            if(indexX == 0) {
+            if(indexX === 0) {
               qrCodeInformation.pixels[coordX + x][coordY + y].fixed = true; // fix the alignment patterns on the left of the QR code
             }
             else if(indexX === alignmentPatterns.length - 1 && indexY === alignmentPatterns.length - 1) {

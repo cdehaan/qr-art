@@ -18,12 +18,35 @@ const colours = [
 ]
 
 export default function GenQr({ qrData, content }: GenQrProps) {
+  //console.log('Received content in GenQr:', content);
 
   function QrPixel({ pixelInfo }: { pixelInfo: PixelDataType }) {
+    if(!pixelInfo) return null;
+    if (!content) {
+      console.log("no content");
+      return null;
+    }
+    if (!(content instanceof Uint8Array)) {
+      console.log("content is not a Uint8Array");
+      return null;
+    }
+    if(content.length === 0) {
+      console.log("content empty");
+      return null;
+    }
+
     const colour = colours.find(rule => rule.type === pixelInfo.type);
-    const pixelState = (!qrData.maskPattern)// || !pixelInfo.dataBlock || !content[pixelInfo.dataBlock] || !pixelInfo.dataBitIndex) 
-      ? 0
-      : pixelInfo.masks[qrData.maskPattern];// ^ parseInt(content[pixelInfo.dataBlock].toString(2).padStart(8,"0").substring(pixelInfo.dataBitIndex, pixelInfo.dataBitIndex+1), 10);
+    const maskPattern = qrData?.maskPattern || 0;
+    const maskState = pixelInfo?.masks?.[maskPattern] || 0;
+    const dataBlockIndex = pixelInfo?.dataBlock || 0;
+    const dataBitIndex = pixelInfo?.dataBitIndex || 0;
+    const contentState = (dataBlockIndex < content.length)
+    ? parseInt(content[dataBlockIndex].toString(2).padStart(8, "0").substring(dataBitIndex, dataBitIndex + 1) ,10)
+    : 0;
+    const pixelState = contentState === maskState ? 0 : 1;
+
+    console.log(`contentState: ${contentState}, pixelState: ${maskState}, dataBlock: ${dataBlockIndex}, dataBitIndex: ${dataBitIndex}`);
+    
     return (
       <div style={{
         display:"flex",
@@ -33,7 +56,7 @@ export default function GenQr({ qrData, content }: GenQrProps) {
         fontSize:"0.5rem",
         overflow:"hidden",
         border:`1px solid ${pixelInfo.fixed ? "#f00" : "#fff"}`,
-        backgroundColor:`hsl(${colour?.hue}, ${colour?.saturation}%, ${(pixelState === 1 && (pixelInfo.type === "data" || pixelInfo.type === "metadata" || pixelInfo.type === "correction")) ? "40" : "60"}%)` }}
+        backgroundColor:`hsl(${colour?.hue}, ${colour?.saturation}%, ${(pixelState === 0 && (pixelInfo.type === "data" || pixelInfo.type === "metadata" || pixelInfo.type === "correction")) ? "40" : "60"}%)` }}
       >{pixelInfo.type === "data" ?
         `${pixelInfo.contentBlock}-${pixelInfo.contentBitIndex}` :
         pixelInfo.type === "correction" ?
