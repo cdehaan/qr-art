@@ -84,6 +84,7 @@ export function versionToBlocks(version: number, correctionLevel: CorrectionLeve
     qrCodeInformation.pixels[i][8].type = "format";
     qrCodeInformation.pixels[8][8].type = "format";
     qrCodeInformation.pixels[gridSize - 1 - i][8].type = "format";
+    qrCodeInformation.pixels[gridSize - 1 - i][8].fixed = false;
     qrCodeInformation.pixels[8][gridSize - 1 - i].type = "format";
   }
   //#endregion
