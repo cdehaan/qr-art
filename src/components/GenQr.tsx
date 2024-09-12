@@ -32,7 +32,7 @@ export default function GenQr({ qrData, content }: GenQrProps) {
         width:"1.5rem",
         fontSize:"0.5rem",
         overflow:"hidden",
-        borderLeft:"1px solid #f00",
+        border:`1px solid ${pixelInfo.fixed ? "#f00" : "#fff"}`,
         backgroundColor:`hsl(${colour?.hue}, ${colour?.saturation}%, ${(pixelState === 1 && (pixelInfo.type === "data" || pixelInfo.type === "metadata" || pixelInfo.type === "correction")) ? "40" : "60"}%)` }}
       >{pixelInfo.type === "data" ?
         `${pixelInfo.contentBlock}-${pixelInfo.contentBitIndex}` :

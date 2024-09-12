@@ -18,6 +18,7 @@ export type PixelDataType = {
   correctionBitIndex: number | null;
   contentBlock: number | null;
   contentBitIndex: number | null;
+  fixed: boolean;
   masks: number[];
 }
 
