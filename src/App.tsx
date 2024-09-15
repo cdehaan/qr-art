@@ -5,12 +5,12 @@ import Grid from './components/Grid';
 import PairInputs from './components/PairInputs';
 import { ModulesProvider } from './contexts/ModulesContext';
 import { versionToBlocks } from './utils/versionToBlocks';
-import GenQr from './components/GenQr';
+import QrCode from './components/QrCode';
 import { CorrectionLevelType } from './types';
 
 const version: number = 13;
 const errorCorrectionLevel: CorrectionLevelType = "L";
-const maskPattern: QRCodeMaskPattern = 5;
+const maskPattern: QRCodeMaskPattern = 4;
 const qrInfo = versionToBlocks(version, errorCorrectionLevel, maskPattern);
 
 export default function App() {
@@ -25,7 +25,11 @@ export default function App() {
   // ª = 10101010 = 170
   // Ì = 11001100 = 204
   const ArraySize = 425;
-  const [qrCode8BitContent, setQrCode8BitContent] = useState<Uint8Array>(new Uint8Array(ArraySize).fill(0));
+  const initialString = "33333333";
+  const paddingValue = 0;
+  const initialContent = Array.from(initialString).map(char => char.charCodeAt(0));
+  const [qrCode8BitContent, setQrCode8BitContent] = useState<Uint8Array>(new Uint8Array([...initialContent, ...new Array(ArraySize)].slice(0, ArraySize).map((item) => item || paddingValue)));
+  //const [qrCode8BitContent, setQrCode8BitContent] = useState<Uint8Array>(new Uint8Array(ArraySize).fill(0));
   //const [qrCode8BitData, setQrCode8BitData] = useState<Uint8Array>(new Uint8Array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]));
 
   useEffect(() => {
@@ -68,7 +72,7 @@ export default function App() {
           <input type='text' style={{width: "80vw"}} value={dataToAscii(qrCode8BitContent)} onChange={(e) => setQrCode8BitContent(asciiToData(e.target.value))} />
           {false && <PairInputs setQrCodeData={setQrCodeData} />}
           {false && <Grid />}
-          <GenQr qrData={qrInfo} content={qrCode8BitContent} />
+          <QrCode qrInfo={qrInfo} content={qrCode8BitContent} />
         </div>
       </div>
     </ModulesProvider>
