@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useModules } from '../contexts/ModulesContext';
+import { QrCodeInformationType } from '../types';
 
-function Grid() {
-    const gridSize = 41;
+type GridProps = {
+    qrInfo: QrCodeInformationType
+};
+
+function Grid({ qrInfo }: GridProps) {
     const { modules, setModuleValue, pairValues, currentDomain, currentStringIndex } = useModules();
+    const gridSize = qrInfo.gridSize;
 
 
     const [isMouseDown, setIsMouseDown] = useState<boolean>(false);
@@ -71,47 +76,6 @@ function Grid() {
         </div>
     );
 
-//    const numberOfBlocks = modules.reduce((max, subArray) => {
-//        // Find the largest blockIndex in the current subArray
-//        const maxInSubArray = subArray.reduce((subMax, obj) => {
-//          return obj.blockIndex > subMax ? obj.blockIndex : subMax;
-//        }, -Infinity);
-//      
-//        // Compare it with the current max
-//        return maxInSubArray > max ? maxInSubArray : max;
-//    }, -Infinity);
-//
-//    const blockValues = [];
-//    for(let blockLooper = 0; blockLooper <= numberOfBlocks; blockLooper++) {
-//        const blockBits = [];
-//        for(let rowLooper = 0; rowLooper < modules.length; rowLooper++) {
-//            for(let colLooper = 0; colLooper < modules[rowLooper].length; colLooper++) {
-//                if(modules[rowLooper][colLooper].blockIndex === blockLooper) {
-//                    const module = modules[rowLooper][colLooper];
-//                    const postMaskValue = module.value === module.masks[1] ? 0 : 1;
-//                    blockBits[modules[rowLooper][colLooper].blockBit] = postMaskValue;
-//                }
-//            }
-//        }
-//        blockValues[blockLooper] = blockBits;
-//    }
-//    console.log("blockValues");
-//    console.log(blockValues);
-//
-//    const blockAscii = blockValues.map((block, blockIndex) => {
-//        return block.reduce((accumulator, bit, bitIndex) => {
-//            return accumulator + (bit ? Math.pow(2, bitIndex) : 0);
-//        }, 0);
-//    });
-//    console.log("blockAscii");
-//    console.log(blockAscii);
-//
-//    const blockAsciiString = blockAscii.map((ascii) => {
-//        return String.fromCharCode(ascii);
-//    });
-//    console.log("blockAsciiString");
-//    console.log(blockAsciiString);
-
     return (
         <>
             <div
@@ -161,7 +125,7 @@ function Grid() {
             {false && <span>[{currentDrawingValues}]</span>}
             {false && pairValuesGrid}
             {false && <><span style={{display: "flex"}}>Current domain: {currentDomain}</span><br /><span  style={{display: "flex"}}>Current string location: {currentStringIndex} of {(!pairValues || !pairValues[0]) ? "?" : pairValues[0].reduce((total, str) => total + str.length, 0)}</span><br /><span style={{display: "flex"}}>started: {lastRefresh}</span></>}
-            {blockValuesGrid}
+            {false && blockValuesGrid}
         </>
     );
 }

@@ -71,8 +71,8 @@ export default function App() {
           {false && <input type='text' style={{width: "80vw"}} value={qrCodeData} onChange={(e) => setQrCodeData(e.target.value)} />}
           <input type='text' style={{width: "80vw"}} value={dataToAscii(qrCode8BitContent)} onChange={(e) => setQrCode8BitContent(asciiToData(e.target.value))} />
           {false && <PairInputs setQrCodeData={setQrCodeData} />}
-          {false && <Grid />}
-          <QrCode qrInfo={qrInfo} content={qrCode8BitContent} />
+          {false && <Grid qrInfo={qrInfo}/>}
+          <QrCode qrInfo={qrInfo} content={qrCode8BitContent} contentSetter={setQrCode8BitContent} />
         </div>
       </div>
     </ModulesProvider>

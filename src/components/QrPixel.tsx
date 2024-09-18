@@ -5,6 +5,7 @@ type QrPixelProps = {
     qrInfo: QrCodeInformationType;
     pixelInfo: PixelDataType;
     content: Uint8Array;
+    contentSetter: React.Dispatch<React.SetStateAction<Uint8Array>>;
 };
 
 const colours = [
@@ -18,7 +19,7 @@ const colours = [
     {type: "data", hue: 0, saturation: 0}, //  gray
 ]
 
-export default function QrPixel({ qrInfo, pixelInfo, content }: QrPixelProps) {
+export default function QrPixel({ qrInfo, pixelInfo, content, contentSetter }: QrPixelProps) {
     if(!pixelInfo) return null;
     if (!content) {
       console.log("no content");
@@ -37,30 +38,26 @@ export default function QrPixel({ qrInfo, pixelInfo, content }: QrPixelProps) {
     const maskPattern = qrInfo?.maskPattern || 0;
     const maskState = pixelInfo?.masks?.[maskPattern] || 0;
 
-    //const dataBlockIndex = pixelInfo?.dataBlock || 0;
-    //const dataBitIndex = pixelInfo?.dataBitIndex || 0;
-    //const contentState = (dataBlockIndex && dataBitIndex && dataBlockIndex < content.length && dataBlockIndex > 0)
-    //? parseInt(content[dataBlockIndex-1].toString(2).padStart(8, "0").substring(dataBitIndex, dataBitIndex+1) ,10)
-    //: 0;
-
     const contentBlockIndex = pixelInfo.contentBlock;
     const contentBitIndex = pixelInfo.contentBitIndex;
-    const contentState = (contentBlockIndex && contentBitIndex && contentBlockIndex < content.length && contentBlockIndex > 0)
-    ? parseInt(content[contentBlockIndex-1].toString(2).padStart(8, "0").substring(contentBitIndex, contentBitIndex+1) ,10)
-    : 0;
-    console.log(`content: ${content[(contentBlockIndex||1)-1]}, contentState: ${contentState}, maskState: ${maskState}, contentBlockIndex: ${contentBlockIndex}, contentBitIndex: ${contentBitIndex}`);
+    const contentBinary = (contentBlockIndex && content[contentBlockIndex-1]) ? content[contentBlockIndex-1].toString(2).padStart(8, "0") : "None";
+    const contentState = (contentBlockIndex !== null && contentBitIndex !== null && contentBlockIndex < content.length && contentBlockIndex > 0)
+      ? parseInt(content[contentBlockIndex-1].toString(2).padStart(8, "0").substring(7-contentBitIndex, 7-contentBitIndex+1) ,10)
+      : 0;
+    if(contentBlockIndex && contentBlockIndex < 10) {
+      console.log(`content: ${content[(contentBlockIndex||1)-1]}, content binary: ${contentBinary}, contentState: ${contentState}, maskState: ${maskState}, contentBlockIndex: ${contentBlockIndex}, contentBitIndex: ${contentBitIndex}`);
+    }
 
     const pixelState = contentState === maskState ? 0 : 1;
     
     return (
       <div style={{
         display:"flex",
-        height: "0.8rem",
-        lineHeight:"0.8rem",
-        width:"1.5rem",
+        height: "1.2rem",
+        width:"1.2rem",
         fontSize:"0.5rem",
         overflow:"hidden",
-        border:`1px solid ${pixelInfo.fixed ? "#f00" : "#fff"}`,
+        border:`1px solid ${pixelInfo.isFixed ? "#f00" : "#fff"}`,
         backgroundColor:`hsl(${colour?.hue}, ${colour?.saturation}%, ${(pixelState === 0 && (pixelInfo.type === "data" || pixelInfo.type === "metadata" || pixelInfo.type === "correction")) ? "80" : "40"}%)` }}
       >{pixelInfo.type === "data" ?
         `${contentBlockIndex}-${contentBitIndex}` :

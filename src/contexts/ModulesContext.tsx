@@ -13,11 +13,11 @@ interface ModuleType {
   masks: boolean[];
   value: boolean;
 
-  blockIndex: number;
-  blockBit: number;
+  blockIndex: number | null;
+  blockBit: number | null;
 
-  pairIndex: number;
-  pairBit: number;
+  pairIndex: number | null;
+  pairBit: number | null;
 }
 
 
@@ -1958,10 +1958,10 @@ function initializeModulesArray(size: number): ModuleType[][] {
     value: false,
 
     blockIndex: 0,
-    blockBit: -1,
+    blockBit: null,
 
     pairIndex: 0,
-    pairBit: -1,
+    pairBit: null,
   };
 
   const initialModules = Array.from({ length: size }, (row, rowIndex) =>  {

@@ -23,9 +23,10 @@ export function versionToBlocks(version: number, correctionLevel: CorrectionLeve
         dataBitIndex: null,
         correctionBlock: null,
         correctionBitIndex: null,
-        contentBitIndex: null,
         contentBlock: null,
-        fixed: true,
+        contentBitIndex: null,
+        contentBit: null,
+        isFixed: true,
         masks: [],
       }))
     ),
@@ -63,13 +64,13 @@ export function versionToBlocks(version: number, correctionLevel: CorrectionLeve
           for(let y = -2; y <= 2; y++) {
             qrCodeInformation.pixels[coordX + x][coordY + y].type = "alignment";
             if(indexX === 0) {
-              qrCodeInformation.pixels[coordX + x][coordY + y].fixed = true; // fix the alignment patterns on the left of the QR code
+              qrCodeInformation.pixels[coordX + x][coordY + y].isFixed = true; // fix the alignment patterns on the left of the QR code
             }
             else if(indexX === alignmentPatterns.length - 1 && indexY === alignmentPatterns.length - 1) {
-              qrCodeInformation.pixels[coordX + x][coordY + y].fixed = true; // fix the alignment patterns on the bottom right of the QR code (visually important)
+              qrCodeInformation.pixels[coordX + x][coordY + y].isFixed = true; // fix the alignment patterns on the bottom right of the QR code (visually important)
             }
             else {
-              qrCodeInformation.pixels[coordX + x][coordY + y].fixed = false; // don't fix the other alignment patterns
+              qrCodeInformation.pixels[coordX + x][coordY + y].isFixed = false; // don't fix the other alignment patterns
             }
           }
         }
@@ -84,7 +85,7 @@ export function versionToBlocks(version: number, correctionLevel: CorrectionLeve
     qrCodeInformation.pixels[i][8].type = "format";
     qrCodeInformation.pixels[8][8].type = "format";
     qrCodeInformation.pixels[gridSize - 1 - i][8].type = "format";
-    qrCodeInformation.pixels[gridSize - 1 - i][8].fixed = false;
+    qrCodeInformation.pixels[gridSize - 1 - i][8].isFixed = false;
     qrCodeInformation.pixels[8][gridSize - 1 - i].type = "format";
   }
   //#endregion
@@ -93,7 +94,7 @@ export function versionToBlocks(version: number, correctionLevel: CorrectionLeve
   // the top timing line can be altered, but not the left line
   for(let x = 8; x <= gridSize-9; x++) {
     qrCodeInformation.pixels[x][6].type = "timing";
-    qrCodeInformation.pixels[x][6].fixed = false;
+    qrCodeInformation.pixels[x][6].isFixed = false;
   }
   for(let y = 8; y <= gridSize-9; y++) {
     qrCodeInformation.pixels[6][y].type = "timing";
@@ -106,7 +107,7 @@ export function versionToBlocks(version: number, correctionLevel: CorrectionLeve
     for(let i = 0; i < 6; i++) {
       for(let j = 0; j < 3; j++) {
         qrCodeInformation.pixels[gridSize - 11 + j][i].type = "version";
-        qrCodeInformation.pixels[gridSize - 11 + j][i].fixed = false;
+        qrCodeInformation.pixels[gridSize - 11 + j][i].isFixed = false;
 
         qrCodeInformation.pixels[i][gridSize - 11 + j].type = "version";
       }
@@ -168,7 +169,7 @@ export function versionToBlocks(version: number, correctionLevel: CorrectionLeve
           qrCodeInformation.pixels[x-step][y].dataBitIndex = bitIndex;
           const sequencedBlock = versionInfo.correctionLevels.find((cl) => cl.level === correctionLevel)?.blockSequence[blockNumber-1] || 0;
           if(blockNumber <= dataBlocks) {
-            qrCodeInformation.pixels[x-step][y].fixed = false;
+            qrCodeInformation.pixels[x-step][y].isFixed = false;
             qrCodeInformation.pixels[x-step][y].dataBlock = sequencedBlock;
             if((sequencedBlock-1)*8 + (7 - bitIndex) >= versionInfo.metadataLength) {
               const totalContentBits = sequencedBlock ? (sequencedBlock * 8 + 7 - bitIndex) - versionInfo.metadataLength : 0;
@@ -185,7 +186,7 @@ export function versionToBlocks(version: number, correctionLevel: CorrectionLeve
             qrCodeInformation.pixels[x-step][y].type = "correction";
             qrCodeInformation.pixels[x-step][y].correctionBlock = sequencedBlock;
             qrCodeInformation.pixels[x-step][y].correctionBitIndex = bitIndex;
-            qrCodeInformation.pixels[x-step][y].fixed = fixedBlock;
+            qrCodeInformation.pixels[x-step][y].isFixed = fixedBlock;
           }
 
           bitIndex--;
