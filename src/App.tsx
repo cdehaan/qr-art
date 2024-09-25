@@ -24,7 +24,7 @@ export default function App() {
   // U = 01010101 = 85
   // ª = 10101010 = 170
   // Ì = 11001100 = 204
-  const ArraySize = 425;
+  const ArraySize = 425; // should be calculated in versionToBlocks
   const initialString = "33333333";
   const paddingValue = 0;
   const initialContent = Array.from(initialString).map(char => char.charCodeAt(0));

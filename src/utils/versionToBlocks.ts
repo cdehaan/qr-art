@@ -15,6 +15,7 @@ export function versionToBlocks(version: number, correctionLevel: CorrectionLeve
     gridSize: gridSize,
     maskPattern: maskPattern,
     blocks: [],
+    //capacity: qrSpec.find((v) => v.version === version)?.capacity || 0,
     pixels: Array.from({ length: gridSize }, () =>
       Array.from({ length: gridSize }, () => ({
         type: "data",
