@@ -10,7 +10,7 @@ import { CorrectionLevelType } from './types';
 
 const version: number = 13;
 const errorCorrectionLevel: CorrectionLevelType = "L";
-const maskPattern: QRCodeMaskPattern = 4;
+const maskPattern: QRCodeMaskPattern = 1;
 const qrInfo = versionToBlocks(version, errorCorrectionLevel, maskPattern);
 
 export default function App() {
@@ -24,9 +24,9 @@ export default function App() {
   // U = 01010101 = 85
   // ª = 10101010 = 170
   // Ì = 11001100 = 204
-  const ArraySize = 425; // should be calculated in versionToBlocks
+  const ArraySize = qrInfo.capacity;
   const initialString = "33333333";
-  const paddingValue = 0;
+  const paddingValue = 51;
   const initialContent = Array.from(initialString).map(char => char.charCodeAt(0));
   const [qrCode8BitContent, setQrCode8BitContent] = useState<Uint8Array>(new Uint8Array([...initialContent, ...new Array(ArraySize)].slice(0, ArraySize).map((item) => item || paddingValue)));
   //const [qrCode8BitContent, setQrCode8BitContent] = useState<Uint8Array>(new Uint8Array(ArraySize).fill(0));

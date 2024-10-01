@@ -28,6 +28,7 @@ export type QrCodeInformationType = {
   gridSize: number;
   maskPattern: number | null;
   blocks: QrBlockType[];
+  capacity: number;
   pixels: PixelDataType[][];
 }
 
